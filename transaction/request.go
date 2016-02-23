@@ -129,6 +129,29 @@ func AuthOnly(api *authorize.API, refID string, amount float64, card CreditCard)
 
 }
 
+func Charge(api *authorize.API, refID string, amount float64, card CreditCard) (r Response, err error) {
+
+	trans := Request{
+		CreateTransactionRequest{
+			MerchantAuthentication: api.MerchantAuthentication,
+			RefID: refID,
+			TransactionRequest: &TransactionRequest{
+				TransactionType: "authCaptureTransaction",
+				Amount:          amount,
+				Payment:         Payment{CreditCard: card},
+			},
+		},
+	}
+
+	err = api.Do(&trans, &r)
+	if err != nil {
+		return
+	}
+
+	return
+
+}
+
 func Capture(api *authorize.API, refID string, transactionID string, amt float64) (r Response, err error) {
 
 	trans := Request{
