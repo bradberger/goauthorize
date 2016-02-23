@@ -1,7 +1,7 @@
 package transaction
 
 import (
-    "encoding/json"
+	"encoding/json"
 )
 
 var responseCodes = `
@@ -2552,31 +2552,31 @@ var responseCodes = `
 `
 
 var (
-    Codes []ResponseCode
+	Codes []ResponseCode
 )
 
 func init() {
-    if err := json.Unmarshal([]byte(responseCodes), &Codes); err != nil {
-        panic(err.Error())
-    }
+	if err := json.Unmarshal([]byte(responseCodes), &Codes); err != nil {
+		panic(err.Error())
+	}
 }
 
 type ResponseCode struct {
-    Code string `json:"code"`
-    Text string `json:"text"`
-    IntegrationSuggessions string `json:"integration_suggestions"`
-    OtherSuggestions string `json:"other_suggestions"`
+	Code                   string `json:"code"`
+	Text                   string `json:"text"`
+	IntegrationSuggessions string `json:"integration_suggestions"`
+	OtherSuggestions       string `json:"other_suggestions"`
 }
 
 func (r *ResponseCode) String() string {
-    return r.Text
+	return r.Text
 }
 
 func GetMessage(code string) string {
-    for _, c := range Codes {
-        if c.Code == code {
-            return c.String()
-        }
-    }
-    return "Uknown code"
+	for _, c := range Codes {
+		if c.Code == code {
+			return c.String()
+		}
+	}
+	return "Uknown code"
 }
