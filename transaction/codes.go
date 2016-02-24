@@ -2583,5 +2583,5 @@ func GetMessage(code string) string {
 			return c.String()
 		}
 	}
-	return "Uknown code"
+	return "Unknown code"
 }
