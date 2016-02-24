@@ -1,3 +1,6 @@
+// Package authorize provides Go bindings for the Authorize.net JSON api. Right
+// now it's quite incomplete, but useful for auth and charge actions. Feel free
+// to jump in and help out to add more functionality.
 package authorize
 
 import (
@@ -8,16 +11,19 @@ import (
 	"net/http"
 )
 
+// API is the high level structure that holds authentication information.
 type API struct {
 	MerchantAuthentication *MerchantAuthentication
 	Sandbox                bool
 }
 
+// MerchantAuthentication is the required struct for authenticating with the Authorize.net API.
 type MerchantAuthentication struct {
 	Name           string `json:"name"`
 	TransactionKey string `json:"transactionKey"`
 }
 
+// GetEndpointURL returns the endpoint URL depending on the Sandbox flag.
 func (a *API) GetEndpointURL() string {
 	if a.Sandbox {
 		return "https://apitest.authorize.net/xml/v1/request.api"
@@ -25,18 +31,23 @@ func (a *API) GetEndpointURL() string {
 	return "https://api.authorize.net/xml/v1/request.api"
 }
 
+// SetCredentials sets the credentials for connecting with the Authorize.net API.
 func (a *API) SetCredentials(loginID, transactionKey string) {
 	a.MerchantAuthentication = &MerchantAuthentication{loginID, transactionKey}
 }
 
+// SetTestMode toggles test mode according to supplied value.
 func (a *API) SetTestMode(t bool) {
 	a.Sandbox = t
 }
 
+// GetClient returns an http.Client for connecting with the API.
 func (a *API) GetClient() *http.Client {
 	return &http.Client{}
 }
 
+// Do sends the request to the API. It's a high-level command, and better to use
+// other methods if they exist for the action you're looking to execute.
 func (a *API) Do(data interface{}, out interface{}) (err error) {
 
 	url := a.GetEndpointURL()

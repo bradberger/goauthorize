@@ -4,7 +4,9 @@ import (
 	"encoding/json"
 )
 
-var responseCodes = `
+// ResponseCodes is a JSON object pulled directly from Authorize.net which contains
+// all possible response codes and their meanings.
+var ResponseCodes = `
 [	{
 		"code" : "I00001",
 		"text" : "Successful.",
@@ -2552,15 +2554,17 @@ var responseCodes = `
 `
 
 var (
+	// Codes is a slice of ResponseCode which is used to return an appropriate error message.
 	Codes []ResponseCode
 )
 
 func init() {
-	if err := json.Unmarshal([]byte(responseCodes), &Codes); err != nil {
+	if err := json.Unmarshal([]byte(ResponseCodes), &Codes); err != nil {
 		panic(err.Error())
 	}
 }
 
+// ResponseCode holds information about a given Authorize.net response code.
 type ResponseCode struct {
 	Code                   string `json:"code"`
 	Text                   string `json:"text"`
@@ -2572,6 +2576,7 @@ func (r *ResponseCode) String() string {
 	return r.Text
 }
 
+// GetMessage retrieves the error message for the given response code
 func GetMessage(code string) string {
 	for _, c := range Codes {
 		if c.Code == code {
