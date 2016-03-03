@@ -26,6 +26,8 @@ type Transaction struct {
 	Duty                *Duty                  `json:"duty,omitempty"`
 	Shipping            *Shipping              `json:"shipping,omitempty"`
 	PONumber            string                 `json:"poNumber,omitempty"`
+	BillTo				*BillTo			       `json:"billTo,omitempty"`
+	ShipTo              *ShipTo                `json:"shipTo,omitempty"`
 	Customer            *Customer              `json:"customer,omitempty"`
 	CustomerIP          string                 `json:"customerIP,omitempty"`
 	TransactionSettings map[string]*Setting    `json:"transactionSettings,omitempty"`
@@ -139,6 +141,24 @@ func AuthOnly(api *authorize.API, refID string, amount float64, card CreditCard)
 
 	err = api.Do(&trans, &r)
 	if err != nil {
+		return
+	}
+
+	return
+
+}
+
+func SendTransaction(api *authorize.API, refID string, t *Transaction) (r Response, err error) {
+
+	trans:= Request{
+		CreateTransactionRequest{
+			MerchantAuthentication: api.MerchantAuthentication,
+			RefID: refID,
+			TransactionRequest: t,
+		},
+	}
+
+	if err = api.Do(&trans, &r); err != nil {
 		return
 	}
 
