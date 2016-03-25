@@ -127,6 +127,11 @@ type UserField struct {
 // AuthOnly creates and authorize-only transaction.
 func AuthOnly(api *authorize.API, refID string, amount float64, card CreditCard) (r Response, err error) {
 
+	// refID max length is 20 characters, so make sure it's only that.
+	if len(refID) > 20 {
+		refID = refID[:20]
+	}
+
 	trans := Request{
 		CreateTransactionRequest{
 			MerchantAuthentication: api.MerchantAuthentication,
@@ -150,6 +155,11 @@ func AuthOnly(api *authorize.API, refID string, amount float64, card CreditCard)
 
 func SendTransaction(api *authorize.API, refID string, t *Transaction) (r Response, err error) {
 
+	// refID max length is 20 characters, so make sure it's only that.
+	if len(refID) > 20 {
+		refID = refID[:20]
+	}
+
 	trans:= Request{
 		CreateTransactionRequest{
 			MerchantAuthentication: api.MerchantAuthentication,
@@ -168,6 +178,11 @@ func SendTransaction(api *authorize.API, refID string, t *Transaction) (r Respon
 
 // Charge autorizes and captures the given transaction.
 func Charge(api *authorize.API, refID string, amount float64, card CreditCard) (r Response, err error) {
+
+	// refID max length is 20 characters, so make sure it's only that.
+	if len(refID) > 20 {
+		refID = refID[:20]
+	}
 
 	trans := Request{
 		CreateTransactionRequest{
@@ -192,6 +207,11 @@ func Charge(api *authorize.API, refID string, amount float64, card CreditCard) (
 
 // Capture captures a previously authorized transaction with the given transactionID.
 func Capture(api *authorize.API, refID string, transactionID string, amt float64) (r Response, err error) {
+
+	// refID max length is 20 characters, so make sure it's only that.
+	if len(refID) > 20 {
+		refID = refID[:20]
+	}
 
 	trans := Request{
 		CreateTransactionRequest{
