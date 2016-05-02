@@ -1,8 +1,18 @@
 package transaction
 
 import (
+	"regexp"
+
 	"github.com/bradberger/goauthorize"
 )
+
+var (
+	cardRegex *regexp.Regexp
+)
+
+func init() {
+	cardRegex = regexp.MustCompile("[^0-9]+")
+}
 
 // Request is the high-level container for all transaction requests.
 type Request struct {
@@ -14,6 +24,11 @@ type CreateTransactionRequest struct {
 	MerchantAuthentication *authorize.MerchantAuthentication `json:"merchantAuthentication"`
 	RefID                  string                            `json:"refId,omitempty"`
 	TransactionRequest     *Transaction                      `json:"transactionRequest"`
+}
+
+type Order struct {
+	InvoiceNumber string `json:"invoiceNumber"`
+	Description   string `json:"description"`
 }
 
 // Transaction holds data related to the transaction itself.
@@ -28,10 +43,10 @@ type Transaction struct {
 	PONumber            string                 `json:"poNumber,omitempty"`
 	BillTo				*BillTo			       `json:"billTo,omitempty"`
 	ShipTo              *ShipTo                `json:"shipTo,omitempty"`
-	Customer            *Customer              `json:"customer,omitempty"`
+	Order               *Order                 `json:"order,omitempty"`
 	CustomerIP          string                 `json:"customerIP,omitempty"`
 	TransactionSettings map[string]*Setting    `json:"transactionSettings,omitempty"`
-	UserFields          map[string][]UserField `json:"userFields,omitempty"`
+	UserFields          UserField 		       `json:"userFields,omitempty"`
 	RefTransID          string                 `json:"refRansId,omitempty"`
 }
 
@@ -51,6 +66,10 @@ type CreditCard struct {
 	CardNumber     string `json:"cardNumber"`
 	ExpirationDate string `json:"expirationDate"`
 	CardCode       string `json:"cardCode"`
+}
+
+func NewCreditCard(number, expiration, code string) *CreditCard {
+	return &CreditCard{cardRegex.ReplaceAllString(number, ""), expiration, code}
 }
 
 // LineItem is the struct which contains line item details.
@@ -81,11 +100,6 @@ type Shipping struct {
 	Amount      float64 `json:"amount,string"`
 	Name        string  `json:"name"`
 	Description string  `json:"description"`
-}
-
-// Customer is an struct which adds customer information to the transaction.
-type Customer struct {
-	ID string `json:"id"`
 }
 
 // BillTo is optional data that can set the bill to parameters of the transaction.
@@ -120,6 +134,11 @@ type Setting struct {
 
 // UserField holds details about the user.
 type UserField struct {
+	UserField []UserFieldPair `json:"userField"`
+
+}
+
+type UserFieldPair struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
 }

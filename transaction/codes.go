@@ -2554,14 +2554,16 @@ var ResponseCodes = `
 `
 
 var (
-	// Codes is a slice of ResponseCode which is used to return an appropriate error message.
-	Codes []ResponseCode
+	// Codes is a list of possible response codes from the Authorize.net API
+	Codes = &[]ResponseCode{}
 )
+
 
 func init() {
 	if err := json.Unmarshal([]byte(ResponseCodes), &Codes); err != nil {
 		panic(err.Error())
 	}
+
 }
 
 // ResponseCode holds information about a given Authorize.net response code.
@@ -2578,7 +2580,7 @@ func (r *ResponseCode) String() string {
 
 // GetMessage retrieves the error message for the given response code
 func GetMessage(code string) string {
-	for _, c := range Codes {
+	for _, c := range *Codes {
 		if c.Code == code {
 			return c.String()
 		}

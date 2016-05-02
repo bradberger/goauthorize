@@ -74,7 +74,15 @@ func (a *API) Do(data interface{}, out interface{}) (err error) {
 
 	// Handle BOM encoding.
 	body = bytes.TrimPrefix(body, []byte{239, 187, 191})
-	log.Printf("%s\n", body)
+	log.Printf("API response body: %s\n", body)
+
+	// First, see if it's a generic error response. If so, return it.
+	errResponse := ErrorResponse{}
+	if err = json.Unmarshal(body, &errResponse); err == nil {
+		if errResponse.Error() != nil {
+			return errResponse.Error()
+		}
+	}
 
 	err = json.Unmarshal(body, &out)
 	return
